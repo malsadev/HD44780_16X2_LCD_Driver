@@ -1,6 +1,5 @@
 #include <stdint.h>
 
-typedef struct lcd_handle_s lcd_handle_s;
 typedef enum lcd_bus_width_e { BUS_4BIT, BUS_8BIT } lcd_bus_width_e;
 typedef enum lcd_display_line_e {
   ONE_LINE_DISPLAY,
@@ -27,6 +26,13 @@ typedef struct lcd_ops_s {
   lcd_pin_set_fn set_pin;
   delay_fn delay_ms;
 } lcd_ops_s;
+typedef struct lcd_handle_s {
+  void *ctx;
+  const lcd_ops_s *ops;
+  lcd_bus_width_e bus_width;
+  lcd_display_line_e display_lines;
+  lcd_display_font_e display_font;
+} lcd_handle_s;
 typedef struct lcd_config_s {
   void *ctx;
   const lcd_ops_s *ops;

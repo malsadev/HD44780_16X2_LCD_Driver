@@ -10,17 +10,18 @@
 #define FUNCTION_SET_5X8_FONT 0x00
 #define FUNCTION_SET_5X10_FONT 0x04
 
+// DISPLAY CONTROL BITMASKS
+#define DISPLAY_CONTROL 0x08
+#define DISPLAY_CONTROL_DISPLAY_ON 0x04
+#define DISPLAY_CONTROL_DISPLAY_OFF 0x00
+#define DISPLAY_CONTROL_CURSOR_ON 0x02
+#define DISPLAY_CONTROL_CURSOR_OFF 0x00
+#define DISPLAY_CONTROL_BLINK_ON 0x01
+#define DISPLAY_CONTROL_BLINK_OFF 0x00
+
 #define DISPLAY_OFF 0x08
 #define DISPLAY_CLEAR 0x01
 #define ENTRY_MODE_RTL 0x06
-
-struct lcd_handle_s {
-  void *ctx;
-  const lcd_ops_s *ops;
-  lcd_bus_width_e bus_width;
-  lcd_display_line_e display_lines;
-  lcd_display_font_e display_font;
-};
 
 typedef enum signal_type_e { INSTRUCTION_SIG, DATA_SIG } signal_type_e;
 static void Write_Bus(uint8_t bitmask, lcd_handle_s *h) {
@@ -85,7 +86,7 @@ void LCD_Init(lcd_handle_s *h, lcd_config_s *c) {
   Send_Command(FUNCTION_SET | FUNCTION_SET_8BIT_INTERFACE, h);
 
   LCD_Function_Set(h, h->bus_width, h->display_lines, h->display_font);
-  Send_Command(DISPLAY_OFF, h);
+  Send_Command(DISPLAY_CONTROL | DISPLAY_CONTROL_DISPLAY_OFF, h);
   Send_Command(DISPLAY_CLEAR, h);
   Send_Command(ENTRY_MODE_RTL, h);
   // INIT ENDS //
