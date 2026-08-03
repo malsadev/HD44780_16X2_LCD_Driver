@@ -20,6 +20,7 @@
 #define DISPLAY_CONTROL_BLINK_OFF 0x00
 
 #define DISPLAY_CLEAR 0x01
+#define DISPLAY_RETURN_HOME 0x02
 
 // ENTRY MODE SET BITMASKS
 #define ENTRY_MODE_SET 0x04
@@ -69,6 +70,14 @@ void LCD_Write_String(lcd_handle_s *h, const char *string) {
   for (const char *c = string; *c != '\0'; c++) {
     LCD_Write_Char(h, *c);
   }
+}
+
+void LCD_Clear_Display(lcd_handle_s *h) {
+  Send_Command(DISPLAY_CLEAR, h);
+}
+
+void LCD_Return_Home(lcd_handle_s *h) {
+  Send_Command(DISPLAY_RETURN_HOME, h);
 }
 
 // 0 indexed
@@ -159,7 +168,7 @@ void LCD_Init(lcd_handle_s *h, lcd_config_s *c) {
 
   LCD_Function_Set(h, h->bus_width, h->display_lines, h->display_font);
   LCD_Display_Control(h, DISPLAY_OFF, CURSOR_OFF, BLINK_OFF);
-  Send_Command(DISPLAY_CLEAR, h);
+  LCD_Clear_Display(h);
   LCD_Entry_Mode_Set(h, CURSOR_INCREMENT, DISPLAY_SHIFT_OFF);
   // INIT ENDS //
 }
