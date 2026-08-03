@@ -28,6 +28,10 @@
 #define ENTRY_MODE_SET_DISPLAY_SHIFT_ON 0x01
 #define ENTRY_MODE_SET_DISPLAY_SHIFT_OFF 0x00
 
+#define DISPLAY_RAM_ADDR_SET 0x80
+#define DISPLAY_FIRST_ROW_OFFSET 0x00
+#define DISPLAY_SECOND_ROW_OFFSET 0x40
+
 typedef enum signal_type_e { INSTRUCTION_SIG, DATA_SIG } signal_type_e;
 static void Write_Bus(uint8_t bitmask, lcd_handle_s *h) {
   for (lcd_pins_e lcd_pin = DB0; lcd_pin <= DB7; lcd_pin++) {
@@ -48,10 +52,28 @@ static void Send_Byte(signal_type_e signal_type, uint8_t bitmask,
   Write_Bus(bitmask, h);
   Latch(h);
 }
+
 static void Send_Command(uint8_t bitmask, lcd_handle_s *h) {
   Send_Byte(INSTRUCTION_SIG, bitmask, h);
 }
 
+static void Send_Data(uint8_t data, lcd_handle_s *h) {
+  Send_Byte(DATA_SIG, data, h);
+}
+
+void LCD_Write_Char(lcd_handle_s *h, char character) {
+  Send_Data(character, h);
+}
+
+// 0 indexed
+void LCD_Set_Cursor(lcd_handle_s *h, uint8_t row, uint8_t col) {
+
+  if (row == 0) {
+    Send_Command(DISPLAY_RAM_ADDR_SET | (DISPLAY_FIRST_ROW_OFFSET | col), h);
+  } else if (row == 1) {
+    Send_Command(DISPLAY_RAM_ADDR_SET | (DISPLAY_SECOND_ROW_OFFSET | col), h);
+  }
+}
 void LCD_Entry_Mode_Set(lcd_handle_s *h,
                         lcd_cursor_direction_e cursor_direction,
                         lcd_display_shift_e display_shift) {

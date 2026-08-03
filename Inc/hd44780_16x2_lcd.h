@@ -55,4 +55,6 @@ void LCD_Function_Set(lcd_handle_s *lcd_handle, lcd_bus_width_e bus_width,
 void LCD_Entry_Mode_Set(lcd_handle_s *lcd_handle,
                         lcd_cursor_direction_e cursor_direction,
                         lcd_display_shift_e display_shift);
+void LCD_Write_Char(lcd_handle_s *lcd_handle, char character);
+void LCD_Set_Cursor(lcd_handle_s *lcd_handle, uint8_t row, uint8_t col);
 // vim: set filetype=c :
