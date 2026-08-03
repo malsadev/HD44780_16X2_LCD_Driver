@@ -65,6 +65,12 @@ void LCD_Write_Char(lcd_handle_s *h, char character) {
   Send_Data(character, h);
 }
 
+void LCD_Write_String(lcd_handle_s *h, const char *string) {
+  for (const char *c = string; *c != '\0'; c++) {
+    LCD_Write_Char(h, *c);
+  }
+}
+
 // 0 indexed
 void LCD_Set_Cursor(lcd_handle_s *h, uint8_t row, uint8_t col) {
 

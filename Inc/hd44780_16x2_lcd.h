@@ -59,6 +59,7 @@ void LCD_Entry_Mode_Set(lcd_handle_s *lcd_handle,
                         lcd_cursor_direction_e cursor_direction,
                         lcd_display_shift_e display_shift);
 void LCD_Write_Char(lcd_handle_s *lcd_handle, char character);
+void LCD_Write_String(lcd_handle_s *lcd_handle, const char *string);
 void LCD_Set_Cursor(lcd_handle_s *lcd_handle, uint8_t row, uint8_t col);
 void LCD_Display_Control(lcd_handle_s *lcd_handle,
                          lcd_display_state_e display_state,
