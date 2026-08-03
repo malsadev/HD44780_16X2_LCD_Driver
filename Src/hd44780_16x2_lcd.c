@@ -19,9 +19,14 @@
 #define DISPLAY_CONTROL_BLINK_ON 0x01
 #define DISPLAY_CONTROL_BLINK_OFF 0x00
 
-#define DISPLAY_OFF 0x08
 #define DISPLAY_CLEAR 0x01
-#define ENTRY_MODE_RTL 0x06
+
+// ENTRY MODE SET BITMASKS
+#define ENTRY_MODE_SET 0x04
+#define ENTRY_MODE_SET_INCREMENT 0x02
+#define ENTRY_MODE_SET_DECREMENT 0x00
+#define ENTRY_MODE_SET_DISPLAY_SHIFT_ON 0x01
+#define ENTRY_MODE_SET_DISPLAY_SHIFT_OFF 0x00
 
 typedef enum signal_type_e { INSTRUCTION_SIG, DATA_SIG } signal_type_e;
 static void Write_Bus(uint8_t bitmask, lcd_handle_s *h) {
@@ -45,6 +50,23 @@ static void Send_Byte(signal_type_e signal_type, uint8_t bitmask,
 }
 static void Send_Command(uint8_t bitmask, lcd_handle_s *h) {
   Send_Byte(INSTRUCTION_SIG, bitmask, h);
+}
+
+void LCD_Entry_Mode_Set(lcd_handle_s *h,
+                        lcd_cursor_direction_e cursor_direction,
+                        lcd_display_shift_e display_shift) {
+  uint8_t entry_mode_set = ENTRY_MODE_SET;
+  if (cursor_direction == CURSOR_DECREMENT) {
+    entry_mode_set |= ENTRY_MODE_SET_DECREMENT;
+  } else {
+    entry_mode_set |= ENTRY_MODE_SET_INCREMENT;
+  }
+  if (display_shift == DISPLAY_SHIFT_OFF) {
+    entry_mode_set |= ENTRY_MODE_SET_DISPLAY_SHIFT_OFF;
+  } else {
+    entry_mode_set |= ENTRY_MODE_SET_DISPLAY_SHIFT_ON;
+  }
+  Send_Command(entry_mode_set, h);
 }
 
 void LCD_Function_Set(lcd_handle_s *h, lcd_bus_width_e bus_width,
@@ -88,6 +110,6 @@ void LCD_Init(lcd_handle_s *h, lcd_config_s *c) {
   LCD_Function_Set(h, h->bus_width, h->display_lines, h->display_font);
   Send_Command(DISPLAY_CONTROL | DISPLAY_CONTROL_DISPLAY_OFF, h);
   Send_Command(DISPLAY_CLEAR, h);
-  Send_Command(ENTRY_MODE_RTL, h);
+  LCD_Entry_Mode_Set(h, CURSOR_INCREMENT, DISPLAY_SHIFT_OFF);
   // INIT ENDS //
 }

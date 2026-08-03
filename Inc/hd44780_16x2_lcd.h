@@ -6,6 +6,14 @@ typedef enum lcd_display_line_e {
   TWO_LINE_DISPLAY
 } lcd_display_line_e;
 typedef enum lcd_display_font_e { FONT_5X8, FONT_5X10 } lcd_display_font_e;
+typedef enum lcd_cursor_direction_e {
+  CURSOR_DECREMENT,
+  CURSOR_INCREMENT
+} lcd_cursor_direction_e;
+typedef enum lcd_display_shift_e {
+  DISPLAY_SHIFT_OFF,
+  DISPLAY_SHIFT_ON
+} lcd_display_shift_e;
 typedef enum lcd_pins_e {
   DB0,
   DB1,
@@ -44,4 +52,7 @@ void LCD_Init(lcd_handle_s *lcd_handle, lcd_config_s *lcd_config);
 void LCD_Function_Set(lcd_handle_s *lcd_handle, lcd_bus_width_e bus_width,
                       lcd_display_line_e display_lines,
                       lcd_display_font_e display_font);
+void LCD_Entry_Mode_Set(lcd_handle_s *lcd_handle,
+                        lcd_cursor_direction_e cursor_direction,
+                        lcd_display_shift_e display_shift);
 // vim: set filetype=c :
