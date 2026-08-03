@@ -14,6 +14,9 @@ typedef enum lcd_display_shift_e {
   DISPLAY_SHIFT_OFF,
   DISPLAY_SHIFT_ON
 } lcd_display_shift_e;
+typedef enum lcd_display_state_e { DISPLAY_OFF, DISPLAY_ON } lcd_display_state_e;
+typedef enum lcd_cursor_state_e { CURSOR_OFF, CURSOR_ON } lcd_cursor_state_e;
+typedef enum lcd_blink_state_e { BLINK_OFF, BLINK_ON } lcd_blink_state_e;
 typedef enum lcd_pins_e {
   DB0,
   DB1,
@@ -57,4 +60,8 @@ void LCD_Entry_Mode_Set(lcd_handle_s *lcd_handle,
                         lcd_display_shift_e display_shift);
 void LCD_Write_Char(lcd_handle_s *lcd_handle, char character);
 void LCD_Set_Cursor(lcd_handle_s *lcd_handle, uint8_t row, uint8_t col);
+void LCD_Display_Control(lcd_handle_s *lcd_handle,
+                         lcd_display_state_e display_state,
+                         lcd_cursor_state_e cursor_state,
+                         lcd_blink_state_e blink_state);
 // vim: set filetype=c :

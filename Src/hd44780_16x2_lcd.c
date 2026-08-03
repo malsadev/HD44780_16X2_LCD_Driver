@@ -91,6 +91,28 @@ void LCD_Entry_Mode_Set(lcd_handle_s *h,
   Send_Command(entry_mode_set, h);
 }
 
+void LCD_Display_Control(lcd_handle_s *h, lcd_display_state_e display_state,
+                         lcd_cursor_state_e cursor_state,
+                         lcd_blink_state_e blink_state) {
+  uint8_t display_control = DISPLAY_CONTROL;
+  if (display_state == DISPLAY_OFF) {
+    display_control |= DISPLAY_CONTROL_DISPLAY_OFF;
+  } else {
+    display_control |= DISPLAY_CONTROL_DISPLAY_ON;
+  }
+  if (cursor_state == CURSOR_OFF) {
+    display_control |= DISPLAY_CONTROL_CURSOR_OFF;
+  } else {
+    display_control |= DISPLAY_CONTROL_CURSOR_ON;
+  }
+  if (blink_state == BLINK_OFF) {
+    display_control |= DISPLAY_CONTROL_BLINK_OFF;
+  } else {
+    display_control |= DISPLAY_CONTROL_BLINK_ON;
+  }
+  Send_Command(display_control, h);
+}
+
 void LCD_Function_Set(lcd_handle_s *h, lcd_bus_width_e bus_width,
                       lcd_display_line_e display_lines,
                       lcd_display_font_e display_font) {
@@ -130,7 +152,7 @@ void LCD_Init(lcd_handle_s *h, lcd_config_s *c) {
   Send_Command(FUNCTION_SET | FUNCTION_SET_8BIT_INTERFACE, h);
 
   LCD_Function_Set(h, h->bus_width, h->display_lines, h->display_font);
-  Send_Command(DISPLAY_CONTROL | DISPLAY_CONTROL_DISPLAY_OFF, h);
+  LCD_Display_Control(h, DISPLAY_OFF, CURSOR_OFF, BLINK_OFF);
   Send_Command(DISPLAY_CLEAR, h);
   LCD_Entry_Mode_Set(h, CURSOR_INCREMENT, DISPLAY_SHIFT_OFF);
   // INIT ENDS //
