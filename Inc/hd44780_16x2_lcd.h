@@ -23,6 +23,7 @@ typedef enum lcd_pins_e {
 typedef void (*lcd_pin_set_fn)(void *ctx, lcd_pins_e lcd_pin, uint8_t state);
 typedef void (*delay_fn)(uint32_t ms);
 typedef struct lcd_ops_s {
+  void (*init)(void *ctx);
   lcd_pin_set_fn set_pin;
   delay_fn delay_ms;
 } lcd_ops_s;

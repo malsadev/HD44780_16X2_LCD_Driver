@@ -14,15 +14,6 @@
 #define DISPLAY_CLEAR 0x01
 #define ENTRY_MODE_RTL 0x06
 
-// Static
-// Static variables exist in the same place throughout the life of the program.
-// Array sizes are fixed at startup, but values can change (so it’s not entirely
-// static). Data is initialized before main starts, and thus any initializations
-// have to be done with constants that require no calculations. Variables
-// declared outside of functions (in 101 www.it-ebooks.info file scope) and
-// inside functions with the static keyword are static. As a bonus, if you
-// forget to initialize a static variable, it is initialized to all zeros (or
-// NULL). lcd_handle_s will be a static variable that can or cannot be externed?
 struct lcd_handle_s {
   void *ctx;
   const lcd_ops_s *ops;
@@ -82,6 +73,10 @@ void LCD_Init(lcd_handle_s *h, lcd_config_s *c) {
   h->bus_width = c->bus_width;
   h->display_lines = c->display_lines;
   h->display_font = c->display_font;
+
+  if (h->ops->init) {
+    h->ops->init(h->ctx);
+  }
 
   Send_Command(FUNCTION_SET | FUNCTION_SET_8BIT_INTERFACE, h);
   h->ops->delay_ms(5);

@@ -1,0 +1,4 @@
+*.o
+*.gch
+*.pch
+compile_commands.json

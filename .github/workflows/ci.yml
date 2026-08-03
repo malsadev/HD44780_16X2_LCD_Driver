@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  clang-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile with clang
+        run: clang @compile_flags.txt -c Src/hd44780_16x2_lcd.c -o hd44780_16x2_lcd.o
+
+  arm-none-eabi-gcc-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install arm-none-eabi-gcc
+        run: sudo apt-get update && sudo apt-get install -y gcc-arm-none-eabi
+      - name: Compile with arm-none-eabi-gcc
+        run: arm-none-eabi-gcc @compile_flags.txt -c Src/hd44780_16x2_lcd.c -o hd44780_16x2_lcd_arm.o
