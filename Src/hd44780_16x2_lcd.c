@@ -12,13 +12,12 @@ union function_set_command {
 };
 
 // FUNCTION SET
-#define FUNCTION_SET_INIT { .fields = { .function_set = 1 } }
+#define FUNCTION_SET_INIT {.fields = {.function_set = 1}}
 
 // Wake-up sequence sent 3x per the datasheet's init-by-instruction flow,
 // always 8-bit regardless of the driver's configured bus width.
 static const union function_set_command FUNCTION_SET_8BIT_WAKEUP = {
-  .fields = { .function_set = 1, .bus_width = BUS_8BIT }
-};
+    .fields = {.function_set = 1, .bus_width = BUS_8BIT}};
 
 // DISPLAY CONTROL BITMASKS
 #define DISPLAY_CONTROL 0x08
@@ -82,13 +81,9 @@ void LCD_Write_String(lcd_handle_s *h, const char *string) {
   }
 }
 
-void LCD_Clear_Display(lcd_handle_s *h) {
-  Send_Command(DISPLAY_CLEAR, h);
-}
+void LCD_Clear_Display(lcd_handle_s *h) { Send_Command(DISPLAY_CLEAR, h); }
 
-void LCD_Return_Home(lcd_handle_s *h) {
-  Send_Command(DISPLAY_RETURN_HOME, h);
-}
+void LCD_Return_Home(lcd_handle_s *h) { Send_Command(DISPLAY_RETURN_HOME, h); }
 
 // 0 indexed
 void LCD_Set_Cursor(lcd_handle_s *h, uint8_t row, uint8_t col) {
@@ -142,9 +137,9 @@ void LCD_Function_Set(lcd_handle_s *h, lcd_bus_width_e bus_width,
                       lcd_display_line_e display_lines,
                       lcd_display_font_e display_font) {
   union function_set_command function_set_builder = FUNCTION_SET_INIT;
-  function_set_builder.fields.character_font = display_font; 
-  function_set_builder.fields.display_lines = display_lines; 
-  function_set_builder.fields.bus_width = bus_width; 
+  function_set_builder.fields.character_font = display_font;
+  function_set_builder.fields.display_lines = display_lines;
+  function_set_builder.fields.bus_width = bus_width;
   Send_Command(function_set_builder.function_set_cmd, h);
 }
 void LCD_Init(lcd_handle_s *h, lcd_config_s *c) {
@@ -158,11 +153,10 @@ void LCD_Init(lcd_handle_s *h, lcd_config_s *c) {
     h->ops->init(h->ctx);
   }
 
-  Send_Command(FUNCTION_SET_8BIT_WAKEUP.function_set_cmd, h);
-  h->ops->delay_ms(5);
-  Send_Command(FUNCTION_SET_8BIT_WAKEUP.function_set_cmd, h);
-  h->ops->delay_ms(1);
-  Send_Command(FUNCTION_SET_8BIT_WAKEUP.function_set_cmd, h);
+  for (int i = 0; i < 3; i++) {
+    Send_Command(FUNCTION_SET_8BIT_WAKEUP.function_set_cmd, h);
+    h->ops->delay_ms(5);
+  }
 
   LCD_Function_Set(h, h->bus_width, h->display_lines, h->display_font);
   LCD_Display_Control(h, DISPLAY_OFF, CURSOR_OFF, BLINK_OFF);
