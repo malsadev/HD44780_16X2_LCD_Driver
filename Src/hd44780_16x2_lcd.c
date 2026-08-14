@@ -1,14 +1,24 @@
 #include "hd44780_16x2_lcd.h"
 #include <stdint.h>
+union function_set_command {
+  uint8_t function_set_cmd;
+  struct {
+    uint8_t : 2;
+    uint8_t character_font : 1;
+    uint8_t display_lines : 1;
+    uint8_t bus_width : 1;
+    uint8_t function_set : 1;
+  } fields;
+};
 
-// FUNCTION SET BITMASKS
-#define FUNCTION_SET 0x20
-#define FUNCTION_SET_8BIT_INTERFACE 0x10
-#define FUNCTION_SET_4BIT_INTERFACE 0x00
-#define FUNCTION_SET_1LINE_DISPLAY 0x00
-#define FUNCTION_SET_2LINE_DISPLAY 0x08
-#define FUNCTION_SET_5X8_FONT 0x00
-#define FUNCTION_SET_5X10_FONT 0x04
+// FUNCTION SET
+#define FUNCTION_SET_INIT { .fields = { .function_set = 1 } }
+
+// Wake-up sequence sent 3x per the datasheet's init-by-instruction flow,
+// always 8-bit regardless of the driver's configured bus width.
+static const union function_set_command FUNCTION_SET_8BIT_WAKEUP = {
+  .fields = { .function_set = 1, .bus_width = BUS_8BIT }
+};
 
 // DISPLAY CONTROL BITMASKS
 #define DISPLAY_CONTROL 0x08
@@ -131,23 +141,11 @@ void LCD_Display_Control(lcd_handle_s *h, lcd_display_state_e display_state,
 void LCD_Function_Set(lcd_handle_s *h, lcd_bus_width_e bus_width,
                       lcd_display_line_e display_lines,
                       lcd_display_font_e display_font) {
-  uint8_t function_set = FUNCTION_SET;
-  if (bus_width == BUS_4BIT) {
-    function_set |= FUNCTION_SET_4BIT_INTERFACE;
-  } else {
-    function_set |= FUNCTION_SET_8BIT_INTERFACE;
-  }
-  if (display_lines == ONE_LINE_DISPLAY) {
-    function_set |= FUNCTION_SET_1LINE_DISPLAY;
-  } else {
-    function_set |= FUNCTION_SET_2LINE_DISPLAY;
-  }
-  if (display_font == FONT_5X8) {
-    function_set |= FUNCTION_SET_5X8_FONT;
-  } else {
-    function_set |= FUNCTION_SET_5X10_FONT;
-  }
-  Send_Command(function_set, h);
+  union function_set_command function_set_builder = FUNCTION_SET_INIT;
+  function_set_builder.fields.character_font = display_font; 
+  function_set_builder.fields.display_lines = display_lines; 
+  function_set_builder.fields.bus_width = bus_width; 
+  Send_Command(function_set_builder.function_set_cmd, h);
 }
 void LCD_Init(lcd_handle_s *h, lcd_config_s *c) {
   h->ctx = c->ctx;
@@ -160,11 +158,11 @@ void LCD_Init(lcd_handle_s *h, lcd_config_s *c) {
     h->ops->init(h->ctx);
   }
 
-  Send_Command(FUNCTION_SET | FUNCTION_SET_8BIT_INTERFACE, h);
+  Send_Command(FUNCTION_SET_8BIT_WAKEUP.function_set_cmd, h);
   h->ops->delay_ms(5);
-  Send_Command(FUNCTION_SET | FUNCTION_SET_8BIT_INTERFACE, h);
+  Send_Command(FUNCTION_SET_8BIT_WAKEUP.function_set_cmd, h);
   h->ops->delay_ms(1);
-  Send_Command(FUNCTION_SET | FUNCTION_SET_8BIT_INTERFACE, h);
+  Send_Command(FUNCTION_SET_8BIT_WAKEUP.function_set_cmd, h);
 
   LCD_Function_Set(h, h->bus_width, h->display_lines, h->display_font);
   LCD_Display_Control(h, DISPLAY_OFF, CURSOR_OFF, BLINK_OFF);

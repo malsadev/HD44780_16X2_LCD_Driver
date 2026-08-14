@@ -1,11 +1,14 @@
 #include <stdint.h>
 
-typedef enum lcd_bus_width_e { BUS_4BIT, BUS_8BIT } lcd_bus_width_e;
+typedef enum lcd_bus_width_e { BUS_4BIT = 0, BUS_8BIT = 1 } lcd_bus_width_e;
 typedef enum lcd_display_line_e {
-  ONE_LINE_DISPLAY,
-  TWO_LINE_DISPLAY
+  ONE_LINE_DISPLAY = 0,
+  TWO_LINE_DISPLAY = 1
 } lcd_display_line_e;
-typedef enum lcd_display_font_e { FONT_5X8, FONT_5X10 } lcd_display_font_e;
+typedef enum lcd_display_font_e {
+  FONT_5X8 = 0,
+  FONT_5X10 = 1
+} lcd_display_font_e;
 typedef enum lcd_cursor_direction_e {
   CURSOR_DECREMENT,
   CURSOR_INCREMENT
@@ -14,7 +17,10 @@ typedef enum lcd_display_shift_e {
   DISPLAY_SHIFT_OFF,
   DISPLAY_SHIFT_ON
 } lcd_display_shift_e;
-typedef enum lcd_display_state_e { DISPLAY_OFF, DISPLAY_ON } lcd_display_state_e;
+typedef enum lcd_display_state_e {
+  DISPLAY_OFF,
+  DISPLAY_ON
+} lcd_display_state_e;
 typedef enum lcd_cursor_state_e { CURSOR_OFF, CURSOR_ON } lcd_cursor_state_e;
 typedef enum lcd_blink_state_e { BLINK_OFF, BLINK_ON } lcd_blink_state_e;
 typedef enum lcd_pins_e {
